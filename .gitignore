@@ -29,3 +29,6 @@ pip-log.txt
 
 #virtualenv
 env/
+
+#Egg
+PyMoneris.egg-info/
