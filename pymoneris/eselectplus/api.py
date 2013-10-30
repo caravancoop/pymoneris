@@ -304,6 +304,10 @@ class Response(object):
             setattr(self, k, v)
 
     @property
+    def response_dict(self):
+        return self._response_dict
+
+    @property
     def is_null(self):
         if self.recipt['ResponseCode'] == 'null':
             return True
