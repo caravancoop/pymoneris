@@ -37,8 +37,9 @@ class ESelectPlus(object):
         >>> res = processor.purchase('1', '42', '0.99', '4242424242424242',
         ...                          '1010', '7')
         """
-        txn = api.Transaction(dict(
+        txn = api.Transaction(**dict(
                 type='purchase',
+                order_id=order_id,
                 cust_id=cust_id,
                 amount=amount,
                 pan=cc_number,
@@ -48,4 +49,59 @@ class ESelectPlus(object):
         if street_num and street_name and zip_code:
             txn.add_avs_info(street_num, street_name, zip_code)
 
-        res = self._server.do_request(txn)
+        return self._server.do_request(txn)
+
+
+    def res_add_cc(self, cc_number, exp_date, crypt_type='7',
+                   email=None, note=None, street_num=None,
+                   street_name=None, zip_code=None, cust_id=None,
+                   phone=None):
+        """
+        """
+
+        txn_data = dict(
+            type='res_add_cc',
+            cust_id=cust_id,
+            pan=cc_number,
+            expdate=exp_date,
+            crypt_type=crypt_type,
+                )
+
+        if note:
+            txn_data['note'] = note
+        if email:
+            txn_data['email'] = email
+        if cust_id:
+            txn_data['cust_id'] = cust_id
+        if phone:
+            txn_data['phone'] = phone
+            
+        txn = api.Transaction(**txn_data)
+
+        if street_num and street_name and zip_code:
+            txn.add_avs_info(street_num, street_name, zip_code)
+
+        return self._server.do_request(txn)
+
+    def res_purchase_cc(self,
+                        data_key,
+                        order_id,
+                        cust_id,
+                        amount,
+                        crypt_type='1',
+                        ):
+        """
+        """
+
+        txn_data = dict(
+            type='res_purchase_cc',
+            data_key=data_key,
+            cust_id=cust_id,
+            order_id=order_id,
+            amount=amount,
+            crypt_type=crypt_type,
+            )
+
+        txn = api.Transaction(**txn_data)
+
+        return self._server.do_request(txn)

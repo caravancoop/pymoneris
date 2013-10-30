@@ -1,6 +1,8 @@
 import unittest
+import datetime
 
 from pymoneris.eselectplus.api import Server, Transaction
+from pymoneris.eselectplus.interface import ESelectPlus
 
 
 # TODO: Move XML expected_output into stub files
@@ -188,3 +190,100 @@ class TestESelectPlusAPI(unittest.TestCase):
                           item=items)
         test_out = self.svr._to_xml(txn)
         assert test_out == expected_out
+
+class TestESelectPlusAPIInterface(unittest.TestCase):
+    def get_iface(self):
+        return ESelectPlus(
+            'store5',
+            'yesguy',
+            'esqa.moneris.com',
+            '443',
+            '/gateway2/servlet/MpgRequest',
+            timeout='60',
+            )
+
+    def get_orderid(self):
+        return 'pymoneris-test-%s' % (
+            datetime.datetime.now().isoformat())
+
+    def test_purchase(self):
+        iface = self.get_iface()
+
+        resp = iface.purchase(
+            order_id=self.get_orderid(),
+            cust_id='123',
+            amount='11.00',
+            cc_number='4242424242424242',
+            exp_date='1508',
+            street_num='123',
+            street_name='happy street',
+            zip_code='H2T1N6',
+            )
+
+        self.assertTrue('receipt' in resp.response_dict)
+        receipt = resp.response_dict['receipt']
+        self.assertTrue('Complete' in receipt)
+        self.assertEquals(receipt['Complete'], 'true')
+        
+
+    def test_res_add_cc(self):
+        """
+        Tests the add credit card functionality.
+        """
+        iface = self.get_iface()
+
+        resp = iface.res_add_cc(
+            cc_number='4242424242424242',
+            exp_date='1508',
+            email='john@doe.com',
+            note='TEsting',
+            street_num='123',
+            street_name='happy street',
+            zip_code='H2T1N6',
+            cust_id='123',
+            phone='514-659-3323',
+            )
+
+        self.assertTrue('receipt' in resp.response_dict)
+        receipt = resp.response_dict['receipt']
+        self.assertTrue('ResSuccess' in receipt)
+        self.assertTrue('Complete' in receipt)
+        self.assertTrue('DataKey' in receipt)
+        self.assertEquals(receipt['ResSuccess'], 'true')
+        self.assertEquals(receipt['Complete'], 'true')
+
+
+    def test_res_add_cc_and_res_purchase(self):
+        """
+        Tests the add credit card functionality.
+        """
+        iface = self.get_iface()
+
+        resp = iface.res_add_cc(
+            cc_number='4242424242424242',
+            exp_date='1508',
+            email='john@doe.com',
+            note='TEsting',
+            street_num='123',
+            street_name='happy street',
+            zip_code='H2T1N6',
+            cust_id='123',
+            phone='514-659-3323',
+            )
+
+        data_key = resp.response_dict['receipt']['DataKey']
+        resp = iface.res_purchase_cc(
+            data_key=data_key,
+            order_id=self.get_orderid(),
+            cust_id='123',
+            amount='10.02',
+            )
+
+        self.assertTrue('receipt' in resp.response_dict)
+        receipt = resp.response_dict['receipt']
+        self.assertTrue('ResSuccess' in receipt)
+        self.assertTrue('Complete' in receipt)
+        self.assertEquals(receipt['ResSuccess'], 'true')
+        self.assertEquals(receipt['Complete'], 'true')
+        
+
