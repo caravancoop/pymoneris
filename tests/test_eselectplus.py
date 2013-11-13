@@ -286,5 +286,3 @@ class TestESelectPlusAPIInterface(unittest.TestCase):
         self.assertTrue('Complete' in receipt)
         self.assertEquals(receipt['ResSuccess'], 'true')
         self.assertEquals(receipt['Complete'], 'true')
-        
-
