@@ -65,17 +65,11 @@ class ESelectPlus(object):
             pan=cc_number,
             expdate=exp_date,
             crypt_type=crypt_type,
-                )
+            note=note,
+            email=email,
+            phone=phone,
+            )
 
-        if note:
-            txn_data['note'] = note
-        if email:
-            txn_data['email'] = email
-        if cust_id:
-            txn_data['cust_id'] = cust_id
-        if phone:
-            txn_data['phone'] = phone
-            
         txn = api.Transaction(**txn_data)
 
         if street_num and street_name and zip_code:
