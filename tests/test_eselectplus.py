@@ -218,6 +218,7 @@ class TestESelectPlusAPIInterface(unittest.TestCase):
             street_num='123',
             street_name='happy street',
             zip_code='H2T1N6',
+            cvd='123',
             )
 
         self.assertTrue('receipt' in resp.response_dict)
@@ -285,5 +286,3 @@ class TestESelectPlusAPIInterface(unittest.TestCase):
         self.assertTrue('Complete' in receipt)
         self.assertEquals(receipt['ResSuccess'], 'true')
         self.assertEquals(receipt['Complete'], 'true')
-        
-

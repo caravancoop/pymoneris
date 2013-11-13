@@ -25,7 +25,7 @@ class ESelectPlus(object):
 
     def purchase(self, order_id, cust_id, amount, cc_number,
                  exp_date, crypt_type='7', street_num=None,
-                 street_name=None, zip_code=None):
+                 street_name=None, zip_code=None, cvd=None):
         """
         If you store the customer's CC on your servers, this is the
         method you want to call to initiate a purchase.  The kwarg
@@ -48,6 +48,13 @@ class ESelectPlus(object):
 
         if street_num and street_name and zip_code:
             txn.add_avs_info(street_num, street_name, zip_code)
+        txn.add_cvd_info(
+            indicator=(
+                0
+                if not cvd else
+                1),
+            value=cvd,
+            )
 
         return self._server.do_request(txn)
 
@@ -65,22 +72,14 @@ class ESelectPlus(object):
             pan=cc_number,
             expdate=exp_date,
             crypt_type=crypt_type,
-                )
+            note=note,
+            email=email,
+            phone=phone,
+            )
 
-        if note:
-            txn_data['note'] = note
-        if email:
-            txn_data['email'] = email
-        if cust_id:
-            txn_data['cust_id'] = cust_id
-        if phone:
-            txn_data['phone'] = phone
-            
         txn = api.Transaction(**txn_data)
-
         if street_num and street_name and zip_code:
             txn.add_avs_info(street_num, street_name, zip_code)
-
         return self._server.do_request(txn)
 
     def res_purchase_cc(self,
