@@ -183,6 +183,7 @@ class Transaction(object):
         ind_refund=['order_id','cust_id', 'amount','pan',
                     'expdate', 'crypt_type'],
         preauth=['order_id','cust_id','amount','pan', 'expdate', 'crypt_type'],
+        card_verification=['order_id','cust_id', 'pan', 'expdate', 'crypt_type'],
         completion=['order_id', 'comp_amount','txn_number', 'crypt_type'],
         purchasecorrection=['order_id', 'txn_number', 'crypt_type'],
         forcepost=['order_id','cust_id', 'amount','pan','expdate',
